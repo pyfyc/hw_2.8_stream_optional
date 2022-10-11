@@ -2,6 +2,8 @@ package com.example.hw_28_stream_optional.controller;
 
 import com.example.hw_28_stream_optional.model.Employee;
 import com.example.hw_28_stream_optional.service.EmployeeService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -19,7 +21,7 @@ public class EmployeeController {
     }
 
     @GetMapping(path = "/add")
-    public Object addEmployee(
+    public ResponseEntity<Employee> addEmployee(
             @RequestParam(value = "firstName") String firstName,
             @RequestParam(value = "lastName") String lastName,
             @RequestParam(value = "salary") int salary,
@@ -28,9 +30,9 @@ public class EmployeeController {
         try {
             employee = employeeService.addEmployee(firstName, lastName, salary, department);
         } catch (Throwable e) {
-            return e.getMessage();
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        return employee;
+        return new ResponseEntity<>(employee, HttpStatus.OK);
     }
 
     @GetMapping(path = "/remove")

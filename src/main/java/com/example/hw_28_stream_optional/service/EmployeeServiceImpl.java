@@ -1,6 +1,7 @@
 package com.example.hw_28_stream_optional.service;
 
 import com.example.hw_28_stream_optional.model.Employee;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
@@ -14,6 +15,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     private final List<Employee> employees;
     private final String ERR_EMPL_ALREADY_ADDED = "Сотрудник уже имеется в массиве";
     private final String ERR_EMPL_NOT_FOUND = "Сотрудник не найден";
+    private final String ERR_INVALID_NAME = "Неверное имя/фамилия";
 
     public EmployeeServiceImpl(List<Employee> employees) {
         this.employees = employees;
@@ -21,7 +23,10 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public Employee addEmployee(String firstName, String lastName, int salary, int department) {
-        Employee employee = new Employee(firstName, lastName, salary, department);
+        if (!validateName(firstName) || !validateName(lastName)) {
+            throw new RuntimeException(ERR_INVALID_NAME);
+        }
+        Employee employee = new Employee(capFirstLetter(firstName), capFirstLetter(lastName), salary, department);
         if (employees.contains(employee)) {
             throw new RuntimeException(ERR_EMPL_ALREADY_ADDED);
         }
@@ -88,5 +93,14 @@ public class EmployeeServiceImpl implements EmployeeService {
         employees.add(new Employee("Roger", "Federer", 120_000, 2));
         employees.add(new Employee("Ivan", "Urgant", 30_000, 1));
         return employees;
+    }
+
+    private boolean validateName(String name) {
+        char[] invalidChars = "1234567890!@#$%^&*()_-=".toCharArray();
+        return StringUtils.containsNone(name, invalidChars);
+    }
+
+    private String capFirstLetter(String str) {
+        return StringUtils.upperCase(str.substring(0, 1)) + str.substring(1);
     }
 }
