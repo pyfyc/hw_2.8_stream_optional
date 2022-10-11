@@ -83,7 +83,7 @@ public class EmployeeController {
         return employee;
     }
 
-    @GetMapping(path = "/departments/all-dep")
+    @GetMapping(path = "/departments/all", params = "departmentId")
     public Object printEmployeesForDepartment(
             @RequestParam(value = "departmentId") int departmentId) {
         List<Employee> employees = null;
