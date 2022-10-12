@@ -21,7 +21,7 @@ public class EmployeeController {
     }
 
     @GetMapping(path = "/add")
-    public ResponseEntity<Employee> addEmployee(
+    public Object addEmployee(
             @RequestParam(value = "firstName") String firstName,
             @RequestParam(value = "lastName") String lastName,
             @RequestParam(value = "salary") int salary,
@@ -30,9 +30,9 @@ public class EmployeeController {
         try {
             employee = employeeService.addEmployee(firstName, lastName, salary, department);
         } catch (Throwable e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return e.getMessage();
         }
-        return new ResponseEntity<>(employee, HttpStatus.OK);
+        return employee;
     }
 
     @GetMapping(path = "/remove")
