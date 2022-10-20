@@ -1,5 +1,6 @@
 package com.example.hw_28_stream_optional.service;
 
+import com.example.hw_28_stream_optional.exceptions.InvalidInputException;
 import com.example.hw_28_stream_optional.model.Employee;
 import org.springframework.stereotype.Service;
 
@@ -9,11 +10,15 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static org.apache.commons.lang3.StringUtils.isAlpha;
+import static org.apache.commons.lang3.StringUtils.upperCase;
+
 @Service
 public class EmployeeServiceImpl implements EmployeeService {
     private final List<Employee> employees;
     private final String ERR_EMPL_ALREADY_ADDED = "Сотрудник уже имеется в массиве";
     private final String ERR_EMPL_NOT_FOUND = "Сотрудник не найден";
+    private final String ERR_INVALID_NAME = "Неверное имя/фамилия";
 
     public EmployeeServiceImpl(List<Employee> employees) {
         this.employees = employees;
@@ -21,6 +26,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public Employee addEmployee(String firstName, String lastName, int salary, int department) {
+        validateInput(firstName, lastName);
         Employee employee = new Employee(firstName, lastName, salary, department);
         if (employees.contains(employee)) {
             throw new RuntimeException(ERR_EMPL_ALREADY_ADDED);
@@ -31,6 +37,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public Employee removeEmployee(String firstName, String lastName) {
+        validateInput(firstName, lastName);
         Employee employee = findEmployee(firstName, lastName);
         employees.remove(employee);
         return employee;
@@ -38,6 +45,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public Employee findEmployee(String firstName, String lastName) {
+        validateInput(firstName, lastName);
         final Optional<Employee> employee = employees.stream()
                 .filter(e -> e.getFirstName().equals(firstName) && e.getLastName().equals(lastName))
                 .findAny();
@@ -88,5 +96,11 @@ public class EmployeeServiceImpl implements EmployeeService {
         employees.add(new Employee("Roger", "Federer", 120_000, 2));
         employees.add(new Employee("Ivan", "Urgant", 30_000, 1));
         return employees;
+    }
+
+    private void validateInput(String firstName, String lastName) {
+        if (!(isAlpha(firstName) && isAlpha(lastName))) {
+            throw new InvalidInputException(ERR_INVALID_NAME);
+        }
     }
 }
