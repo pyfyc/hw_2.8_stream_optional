@@ -5,20 +5,14 @@ import com.example.hw_28_stream_optional.model.Employee;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static org.apache.commons.lang3.StringUtils.isAlpha;
-import static org.apache.commons.lang3.StringUtils.upperCase;
 
 @Service
 public class EmployeeServiceImpl implements EmployeeService {
     private final List<Employee> employees;
-    private final String ERR_EMPL_ALREADY_ADDED = "Сотрудник уже имеется в массиве";
-    private final String ERR_EMPL_NOT_FOUND = "Сотрудник не найден";
-    private final String ERR_INVALID_NAME = "Неверное имя/фамилия";
 
     public EmployeeServiceImpl(List<Employee> employees) {
         this.employees = employees;
@@ -27,9 +21,10 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     public Employee addEmployee(String firstName, String lastName, int salary, int department) {
         validateInput(firstName, lastName);
+
         Employee employee = new Employee(firstName, lastName, salary, department);
         if (employees.contains(employee)) {
-            throw new RuntimeException(ERR_EMPL_ALREADY_ADDED);
+            throw new RuntimeException(Constants.ERR_EMPLOYEE_ALREADY_ADDED);
         }
         employees.add(employee);
         return employee;
@@ -49,37 +44,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         final Optional<Employee> employee = employees.stream()
                 .filter(e -> e.getFirstName().equals(firstName) && e.getLastName().equals(lastName))
                 .findAny();
-        return employee.orElseThrow(() -> new RuntimeException(ERR_EMPL_NOT_FOUND));
-    }
-
-    @Override
-    public Employee getLowestPaidEmployee(int department) {
-        return employees.stream()
-                .filter(e -> e.getDepartment() == department)
-                .min(Comparator.comparingInt(e -> e.getSalary()))
-                .orElseThrow(() -> new RuntimeException(ERR_EMPL_NOT_FOUND));
-    }
-
-    @Override
-    public Employee getHighestPaidEmployee(int department) {
-        return employees.stream()
-                .filter(e -> e.getDepartment() == department)
-                .max(Comparator.comparingInt(e -> e.getSalary()))
-                .orElseThrow(() -> new RuntimeException(ERR_EMPL_NOT_FOUND));
-    }
-
-    @Override
-    public List<Employee> printEmployeesForDepartment(int department) {
-        return employees.stream()
-                .filter(e -> e.getDepartment() == department)
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public List<Employee> printEmployeesByDepartments() {
-        return Collections.unmodifiableList(employees.stream()
-                .sorted(Comparator.comparingInt(e -> e.getDepartment()))
-                .collect(Collectors.toList()));
+        return employee.orElseThrow(() -> new RuntimeException(Constants.ERR_EMPLOYEE_NOT_FOUND));
     }
 
     @Override
@@ -100,7 +65,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     private void validateInput(String firstName, String lastName) {
         if (!(isAlpha(firstName) && isAlpha(lastName))) {
-            throw new InvalidInputException(ERR_INVALID_NAME);
+            throw new InvalidInputException(Constants.ERR_INVALID_NAME);
         }
     }
 }
