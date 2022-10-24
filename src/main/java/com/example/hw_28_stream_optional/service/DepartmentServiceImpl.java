@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 
 @Service
 public class DepartmentServiceImpl implements DepartmentService {
-    EmployeeService employeeService;
+    private EmployeeService employeeService;
 
     public DepartmentServiceImpl(EmployeeService employeeService) {
         this.employeeService = employeeService;
@@ -18,7 +18,7 @@ public class DepartmentServiceImpl implements DepartmentService {
 
     @Override
     public Employee getLowestPaidEmployee(int department) {
-        return employeeService.printEmployees().stream()
+        return employeeService.getEmployees().stream()
                 .filter(e -> e.getDepartment() == department)
                 .min(Comparator.comparingInt(e -> e.getSalary()))
                 .orElseThrow(() -> new RuntimeException(Constants.ERR_EMPLOYEE_NOT_FOUND));
@@ -26,7 +26,7 @@ public class DepartmentServiceImpl implements DepartmentService {
 
     @Override
     public Employee getHighestPaidEmployee(int department) {
-        return employeeService.printEmployees().stream()
+        return employeeService.getEmployees().stream()
                 .filter(e -> e.getDepartment() == department)
                 .max(Comparator.comparingInt(e -> e.getSalary()))
                 .orElseThrow(() -> new RuntimeException(Constants.ERR_EMPLOYEE_NOT_FOUND));
@@ -34,14 +34,14 @@ public class DepartmentServiceImpl implements DepartmentService {
 
     @Override
     public List<Employee> printEmployeesForDepartment(int department) {
-        return employeeService.printEmployees().stream()
+        return employeeService.getEmployees().stream()
                 .filter(e -> e.getDepartment() == department)
                 .collect(Collectors.toList());
     }
 
     @Override
     public List<Employee> printEmployeesByDepartments() {
-        return Collections.unmodifiableList(employeeService.printEmployees().stream()
+        return Collections.unmodifiableList(employeeService.getEmployees().stream()
                 .sorted(Comparator.comparingInt(e -> e.getDepartment()))
                 .collect(Collectors.toList()));
     }

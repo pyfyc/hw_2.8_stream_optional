@@ -63,22 +63,10 @@ public class EmployeeController {
     public Object printEmployees() {
         List<Employee> employees = null;
         try {
-            employees = employeeService.printEmployees();
+            employees = employeeService.getEmployees();
         } catch (Throwable e) {
             return e.getMessage();
         }
         return employees;
     }
-
-    @GetMapping(path = "/fill")
-    public Object fillEmployeesList() {
-        List<Employee> employees = null;
-        try {
-            employees = employeeService.fillEmployeesList();
-        } catch (Throwable e) {
-            return e.getMessage();
-        }
-        return employees;
-    }
-
 }

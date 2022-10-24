@@ -4,7 +4,7 @@ import com.example.hw_28_stream_optional.exceptions.InvalidInputException;
 import com.example.hw_28_stream_optional.model.Employee;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -12,11 +12,7 @@ import static org.apache.commons.lang3.StringUtils.isAlpha;
 
 @Service
 public class EmployeeServiceImpl implements EmployeeService {
-    private final List<Employee> employees;
-
-    public EmployeeServiceImpl(List<Employee> employees) {
-        this.employees = employees;
-    }
+    private final List<Employee> employees = new ArrayList<>();
 
     @Override
     public Employee addEmployee(String firstName, String lastName, int salary, int department) {
@@ -48,19 +44,8 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public List<Employee> printEmployees() {
-        return Collections.unmodifiableList(employees);
-    }
-
-    @Override
-    public List<Employee> fillEmployeesList() {
-        employees.add(new Employee("Maria", "Sharapova", 80_000, 2));
-        employees.add(new Employee("Vasya", "Pupkin", 10_000, 1));
-        employees.add(new Employee("Oleg", "Ivanov", 20_000, 1));
-        employees.add(new Employee("Rafa", "Nadal", 100_000, 2));
-        employees.add(new Employee("Roger", "Federer", 120_000, 2));
-        employees.add(new Employee("Ivan", "Urgant", 30_000, 1));
-        return employees;
+    public List<Employee> getEmployees() {
+        return new ArrayList<>(employees);
     }
 
     private void validateInput(String firstName, String lastName) {
